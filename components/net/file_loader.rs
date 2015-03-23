@@ -16,10 +16,13 @@ static READ_SIZE: uint = 8192;
 fn read_all(reader: &mut io::Read, progress_chan: &Sender<ProgressMsg>)
         -> Result<(), String> {
     loop {
-        let mut buf = Vec::with_capacity(READ_SIZE);
+        let mut buf = vec![0; READ_SIZE];
         match reader.read(buf.as_mut_slice()) {
             Ok(0) => return Ok(()),
-            Ok(_) => progress_chan.send(Payload(buf)).unwrap(),
+            Ok(n) => {
+                buf.truncate(n);
+                progress_chan.send(Payload(buf)).unwrap();
+            },
             Err(e) => return Err(e.description().to_string()),
         }
     }
