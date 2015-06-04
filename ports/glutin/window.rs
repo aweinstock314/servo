@@ -183,17 +183,17 @@ impl Window {
                 self.event_queue.borrow_mut().push(
                     WindowEvent::MouseWindowMoveEventClass(TypedPoint2D(x as f32, y as f32)));
             }
-            Event::MouseWheel(delta) => {
+            Event::MouseWheel(delta_x, delta_y) => {
                 if self.ctrl_pressed() {
                     // Ctrl-Scrollwheel simulates a "pinch zoom" gesture.
-                    if delta < 0 {
+                    if delta_y < 0.0 {
                         self.event_queue.borrow_mut().push(WindowEvent::PinchZoom(1.0/1.1));
-                    } else if delta > 0 {
+                    } else if delta_y > 0.0 {
                         self.event_queue.borrow_mut().push(WindowEvent::PinchZoom(1.1));
                     }
                 } else {
-                    let dx = 0.0;
-                    let dy = delta as f32;
+                    let dx = delta_x as f32;
+                    let dy = delta_y as f32;
                     self.scroll_window(dx, dy);
                 }
             },
